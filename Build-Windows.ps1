@@ -67,6 +67,7 @@ Copy-Item -LiteralPath (Join-Path $project 'assets\fonts\NotoSansKR-OFL.txt') -D
 Copy-Item -LiteralPath (Join-Path $project 'OPERATOR_DASHBOARD.md'),(Join-Path $project 'Operator-Control.ps1'),(Join-Path $project 'Operator-Control.cmd') -Destination $operationsTargetDirectory -Force
 
 $archivePath = Join-Path (Split-Path -Parent $OutputDirectory) 'ArtValleyPhotoBooth-Windows.zip'
+$installerPath = Join-Path (Split-Path -Parent $OutputDirectory) 'ArtValleyPhotoBooth-Setup.exe'
 $packageStageDirectory = Join-Path (Split-Path -Parent $OutputDirectory) ('PackageStage-' + [guid]::NewGuid().ToString('N'))
 try {
     $stageBridgeDirectory = Join-Path $packageStageDirectory 'CameraBridge'
@@ -94,5 +95,77 @@ finally {
         Remove-Item -LiteralPath $resolvedStage -Recurse -Force
     }
 }
+
+$iexpress = Join-Path $env:WINDIR 'System32\iexpress.exe'
+if (-not (Test-Path -LiteralPath $iexpress -PathType Leaf)) {
+    throw "Windows IExpress was not found: $iexpress"
+}
+$installerStageDirectory = Join-Path (Split-Path -Parent $OutputDirectory) ('OneFileStage-' + [guid]::NewGuid().ToString('N'))
+$installerSedPath = Join-Path (Split-Path -Parent $OutputDirectory) ('OneFile-' + [guid]::NewGuid().ToString('N') + '.sed')
+try {
+    New-Item -ItemType Directory -Force -Path $installerStageDirectory | Out-Null
+    Copy-Item -LiteralPath $archivePath,(Join-Path $project 'installer\Install-FromBundle.ps1'),(Join-Path $project 'installer\Install-FromBundle.cmd') -Destination $installerStageDirectory
+    $sed = @"
+[Version]
+Class=IEXPRESS
+SEDVersion=3
+[Options]
+PackagePurpose=InstallApp
+ShowInstallProgramWindow=0
+HideExtractAnimation=1
+UseLongFileName=1
+InsideCompressed=0
+CAB_FixedSize=0
+CAB_ResvCodeSigning=0
+RebootMode=N
+InstallPrompt=%InstallPrompt%
+DisplayLicense=%DisplayLicense%
+FinishMessage=%FinishMessage%
+TargetName=%TargetName%
+FriendlyName=%FriendlyName%
+AppLaunched=%AppLaunched%
+PostInstallCmd=%PostInstallCmd%
+AdminQuietInstCmd=%AdminQuietInstCmd%
+UserQuietInstCmd=%UserQuietInstCmd%
+SourceFiles=SourceFiles
+[Strings]
+InstallPrompt=
+DisplayLicense=
+FinishMessage=
+TargetName=$installerPath
+FriendlyName=Art Valley Photo Booth Setup
+AppLaunched=cmd.exe /c Install-FromBundle.cmd
+PostInstallCmd=<None>
+AdminQuietInstCmd=<None>
+UserQuietInstCmd=<None>
+FILE0="ArtValleyPhotoBooth-Windows.zip"
+FILE1="Install-FromBundle.ps1"
+FILE2="Install-FromBundle.cmd"
+[SourceFiles]
+SourceFiles0=$installerStageDirectory
+[SourceFiles0]
+%FILE0%=
+%FILE1%=
+%FILE2%=
+"@
+    Set-Content -LiteralPath $installerSedPath -Value $sed -Encoding ASCII
+    $iexpressProcess = Start-Process -FilePath $iexpress -ArgumentList @('/N','/Q',$installerSedPath) -Wait -PassThru
+    if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
+        throw 'Single-file Windows setup creation failed.'
+    }
+}
+finally {
+    foreach ($path in @($installerStageDirectory,$installerSedPath)) {
+        if (Test-Path -LiteralPath $path) {
+            $resolvedPath = (Resolve-Path -LiteralPath $path).Path
+            $resolvedBuildParent = (Resolve-Path -LiteralPath (Split-Path -Parent $OutputDirectory)).Path
+            if (-not $resolvedPath.StartsWith($resolvedBuildParent,[StringComparison]::OrdinalIgnoreCase)) {
+                throw 'Refusing to remove one-file installer staging data outside the build directory.'
+            }
+            Remove-Item -LiteralPath $resolvedPath -Recurse -Force
+        }
+    }
+}
 Write-Host "Windows kiosk package created: $OutputDirectory"
 Write-Host "Portable package archive created: $archivePath"
+Write-Host "Single-file Windows setup created: $installerPath"
