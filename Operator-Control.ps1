@@ -14,6 +14,7 @@ $tunnelExe = Join-Path $boothDirectory 'StreamingAssets\cloudflared.exe'
 $configPath = Join-Path $boothDirectory 'StreamingAssets\config.json'
 $photosPath = Join-Path $boothDirectory 'MyPhotoBooth'
 $logPath = Join-Path $boothDirectory 'CameraBridge\camera_bridge.log'
+$startupShortcut = Join-Path ([Environment]::GetFolderPath('Startup')) 'Art Valley Photo Booth.lnk'
 
 function Get-ManagedProcesses([string]$path) {
 
@@ -30,6 +31,7 @@ function Show-Status {
     Write-Host ("앱:       {0}" -f $(if ($booth.Count) { '실행 중' } else { '중지' }))
     Write-Host ("카메라:   {0}" -f $(if ($bridge.Count) { '브리지 실행 중' } else { '브리지 중지' }))
     Write-Host ("공유터널: {0}" -f $(if ($tunnel.Count) { '실행 중' } else { '중지' }))
+    Write-Host ("Windows 로그인 자동 실행: {0}" -f $(if (Test-Path -LiteralPath $startupShortcut) { '등록됨' } else { '미등록' }))
     Write-Host ("카메라 포트 49152: {0}" -f $(if ((Test-NetConnection 127.0.0.1 -Port 49152 -InformationLevel Quiet -WarningAction SilentlyContinue)) { '연결됨' } else { '대기/끊김' }))
     Write-Host ''
     if (Test-Path -LiteralPath $configPath) {
@@ -56,7 +58,7 @@ while ($true) {
     $buildLabel = if ($buildScript) { 'Windows 패키지 다시 빌드' } else { '재빌드 (개발 프로젝트에서만 가능)' }
     Write-Host '[1] 포토부스 실행  [2] 앱/브리지/터널 종료  [3] 설정 열기'
     Write-Host ("[4] 사진 폴더  [5] 배포 폴더  [6] 카메라 로그  [7] {0}" -f $buildLabel)
-    Write-Host '[8] 진행/검수 문서 열기  [Q] 닫기'
+    Write-Host '[8] 운영 안내서 열기  [9] 로그인 자동 실행 등록/해제  [Q] 닫기'
     $selection = Read-Host '선택'
     if ($null -eq $selection) { break }
     $choice = $selection.Trim().ToUpperInvariant()
@@ -88,6 +90,27 @@ while ($true) {
             } else { Write-Host '이 포터블 배포본에는 Godot 원본/빌드 도구가 없습니다. 개발 프로젝트에서 재빌드하세요.' -ForegroundColor Yellow; Start-Sleep -Seconds 2 }
         }
         '8' { Start-Process notepad.exe -ArgumentList @((Join-Path $operationsDirectory 'OPERATOR_DASHBOARD.md')) | Out-Null }
+        '9' {
+            if (Test-Path -LiteralPath $startupShortcut) {
+                $answer = Read-Host '로그인 자동 실행을 해제하려면 R, 유지하려면 Enter'
+                if ($answer.Trim().ToUpperInvariant() -eq 'R') {
+                    Remove-Item -LiteralPath $startupShortcut -Force
+                    Write-Host '로그인 자동 실행을 해제했습니다.' -ForegroundColor Green
+                }
+            } elseif (Test-Path -LiteralPath $boothExe -PathType Leaf) {
+                $answer = Read-Host '현재 Windows 계정 로그인 때 포토부스를 실행하도록 등록할까요? (Y/N)'
+                if ($answer.Trim().ToUpperInvariant() -eq 'Y') {
+                    $shell = New-Object -ComObject WScript.Shell
+                    $shortcut = $shell.CreateShortcut($startupShortcut)
+                    $shortcut.TargetPath = $boothExe
+                    $shortcut.WorkingDirectory = $boothDirectory
+                    $shortcut.Description = 'Art Valley Photo Booth kiosk startup'
+                    $shortcut.Save()
+                    Write-Host '이 Windows 계정의 시작프로그램에 등록했습니다.' -ForegroundColor Green
+                }
+            } else { Write-Host '포토부스 EXE가 없습니다. 먼저 ZIP을 로컬 폴더에 풀어주세요.' -ForegroundColor Yellow }
+            Start-Sleep -Seconds 2
+        }
         'Q' { break }
         default { }
     }

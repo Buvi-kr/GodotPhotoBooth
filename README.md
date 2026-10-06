@@ -17,7 +17,7 @@
 
 ## 한 번에 실행·관제
 
-프로젝트 또는 포터블 패키지에서 [Operator-Control.cmd](Operator-Control.cmd)를 실행합니다. 메뉴에서 앱 실행·종료, 프로세스/포트/설정/카메라 로그 확인, 설정 파일·사진·배포 폴더 열기, 개발 프로젝트 재빌드, 운영 문서 열기를 선택할 수 있습니다.
+프로젝트 또는 포터블 패키지에서 [Operator-Control.cmd](Operator-Control.cmd)를 실행합니다. 메뉴에서 앱 실행·종료, 프로세스/포트/설정/카메라 로그 확인, 설정 파일·사진·배포 폴더 열기, Windows 로그인 자동 실행 등록/해제, 개발 프로젝트 재빌드, 운영 문서 열기를 선택할 수 있습니다.
 
 운영 방법과 실물 점검 순서는 [OPERATOR_DASHBOARD.md](OPERATOR_DASHBOARD.md)에 있습니다. 개발 진행 메모와 현장 시험 로그는 공개 저장소에서 제외합니다.
 
@@ -54,7 +54,7 @@ Godot와 template을 다른 위치에 설치했다면 경로를 지정할 수 �
 
 완료되면 실행 파일은 `Build/Windows/`, 배포 압축은 `Build/ArtValleyPhotoBooth-Windows.zip`에 생성됩니다. ZIP 안의 `Operations/`에 관제 프로그램과 안내서가 들어갑니다. `Build/`, 엔진 다운로드 및 export template은 생성·로컬 도구이므로 Git에서 제외합니다.
 
-실행 폴더에 쓰기 권한을 주세요. 설정은 `StreamingAssets/config.json`, 사진·CSV·터널 로그는 `MyPhotoBooth/`에 둡니다. 사진 자동 정리는 Unity와 같이 1일 경과분이 대상이고 최소 보관 수는 0입니다.
+실행 폴더에 쓰기 권한을 주세요. 설정은 `StreamingAssets/config.json`, 사진·CSV·터널 로그는 `MyPhotoBooth/`에 둡니다. Windows 시작 시 실행이 필요하면 ZIP을 USB에서 직접 실행하지 말고 쓰기 가능한 로컬 폴더에 먼저 풀고, `Operations/Operator-Control.cmd`에서 `[9]`를 선택해 자동 실행을 등록하세요. 이 등록은 현재 Windows 계정 로그인 때 앱 EXE를 실행하는 바로가기를 만듭니다. 사진 정리는 1일 경과분이 대상이고 최소 보관 수는 0입니다.
 
 ## 구조
 
