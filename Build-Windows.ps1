@@ -64,7 +64,7 @@ Copy-Item -LiteralPath (Join-Path $project 'LICENSE') -Destination (Join-Path $O
 Copy-Item -LiteralPath (Join-Path $project 'LICENSES.md') -Destination (Join-Path $OutputDirectory 'LICENSES.md') -Force
 Copy-Item -Path (Join-Path $project 'licenses\*') -Destination $licenseTargetDirectory -Force
 Copy-Item -LiteralPath (Join-Path $project 'assets\fonts\NotoSansKR-OFL.txt') -Destination (Join-Path $licenseTargetDirectory 'NotoSansKR-OFL.txt') -Force
-Copy-Item -LiteralPath (Join-Path $project 'OPERATOR_DASHBOARD.md'),(Join-Path $project 'PROGRESS.md'),(Join-Path $project 'Operator-Control.ps1'),(Join-Path $project 'Operator-Control.cmd') -Destination $operationsTargetDirectory -Force
+Copy-Item -LiteralPath (Join-Path $project 'OPERATOR_DASHBOARD.md'),(Join-Path $project 'Operator-Control.ps1'),(Join-Path $project 'Operator-Control.cmd') -Destination $operationsTargetDirectory -Force
 
 $archivePath = Join-Path (Split-Path -Parent $OutputDirectory) 'ArtValleyPhotoBooth-Windows.zip'
 $packageStageDirectory = Join-Path (Split-Path -Parent $OutputDirectory) ('PackageStage-' + [guid]::NewGuid().ToString('N'))
@@ -80,7 +80,7 @@ try {
     Copy-Item -LiteralPath (Join-Path $bridgeTargetDirectory 'CameraBridge.exe') -Destination $stageBridgeDirectory
     Copy-Item -LiteralPath $cloudflaredTarget,$configTarget -Destination $stageStreamingDirectory
     Copy-Item -LiteralPath (Join-Path $licenseTargetDirectory 'Apache-2.0.txt'),(Join-Path $licenseTargetDirectory 'Godot-MIT.txt'),(Join-Path $licenseTargetDirectory 'Godot-Third-Party.txt'),(Join-Path $licenseTargetDirectory 'NotoSansKR-OFL.txt') -Destination $stageLicensesDirectory
-    Copy-Item -LiteralPath (Join-Path $operationsTargetDirectory 'OPERATOR_DASHBOARD.md'),(Join-Path $operationsTargetDirectory 'PROGRESS.md'),(Join-Path $operationsTargetDirectory 'Operator-Control.ps1'),(Join-Path $operationsTargetDirectory 'Operator-Control.cmd') -Destination $stageOperationsDirectory
+    Copy-Item -LiteralPath (Join-Path $operationsTargetDirectory 'OPERATOR_DASHBOARD.md'),(Join-Path $operationsTargetDirectory 'Operator-Control.ps1'),(Join-Path $operationsTargetDirectory 'Operator-Control.cmd') -Destination $stageOperationsDirectory
 
     Compress-Archive -Path (Join-Path $packageStageDirectory '*') -DestinationPath $archivePath -CompressionLevel Optimal -Force
 }
