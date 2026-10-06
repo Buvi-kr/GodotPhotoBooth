@@ -1,0 +1,38 @@
+# Godot editor cache and import database.
+/.godot/
+/.godot-user/
+
+# Local engine install/export template and generated binaries.
+/tools/godot/
+/export_templates/
+/bin/
+/CameraBridge/bin/
+/CameraBridge/obj/
+
+# Windows builds, package staging, and runtime data.
+/Build/
+/MyPhotoBooth/*
+!/MyPhotoBooth/.gdignore
+/bin/
+*.log
+
+# Museum-owned backgrounds, overlays, thumbnails, and original video assets.
+# Keep these on the kiosk/package workstation; never publish them to GitHub.
+/assets/backgrounds/
+/assets/videos/
+
+# Local operational configuration and bundled executable dependencies.
+# Provide these privately when preparing the museum kiosk package.
+/data/config.json
+/runtime/*.exe
+/PROGRESS.md
+
+# Local secrets, camera captures, and machine-specific settings.
+.env
+.env.*
+*.pfx
+*.p12
+*.key
+*.pem
+*.jks
+*.csv

@@ -1,0 +1,3 @@
+extends RefCounted
+
+enum Value { STANDBY, SELECT_BG, CAPTURE, CALIBRATION, PROCESSING, RESULT }
