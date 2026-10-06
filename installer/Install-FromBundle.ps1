@@ -31,6 +31,14 @@ try {
     $shortcut.Description = 'Art Valley Photo Booth'
     $shortcut.Save()
 
+    $startupDirectory = [Environment]::GetFolderPath('Startup')
+    New-Item -ItemType Directory -Force -Path $startupDirectory | Out-Null
+    $startupShortcut = $shell.CreateShortcut((Join-Path $startupDirectory 'Art Valley Photo Booth.lnk'))
+    $startupShortcut.TargetPath = $applicationPath
+    $startupShortcut.WorkingDirectory = $installDirectory
+    $startupShortcut.Description = 'Start Art Valley Photo Booth when this Windows account signs in'
+    $startupShortcut.Save()
+
     Start-Process -FilePath $applicationPath -WorkingDirectory $installDirectory
 } catch {
     Show-InstallMessage $_.Exception.Message ([System.Windows.Forms.MessageBoxIcon]::Error)

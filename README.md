@@ -52,9 +52,9 @@ Godot와 template을 다른 위치에 설치했다면 경로를 지정할 수 �
   -ExportTemplate 'C:\Tools\Godot\windows_release_x86_64.exe'
 ```
 
-완료되면 포터블 ZIP은 `Build/ArtValleyPhotoBooth-Windows.zip`, 한 파일 설치본은 `Build/ArtValleyPhotoBooth-Setup.exe`에 생성됩니다. 과학관 PC에는 설치본 하나만 복사해 실행하면 `%LOCALAPPDATA%\Programs\Art Valley Photo Booth`에 풀고 앱을 시작하며 시작 메뉴 바로가기를 만듭니다. ZIP의 `Operations/`에 관제 프로그램과 안내서가 들어갑니다. `Build/`, 엔진 다운로드 및 export template은 생성·로컬 도구이므로 Git에서 제외합니다.
+완료되면 포터블 ZIP은 `Build/ArtValleyPhotoBooth-Windows.zip`, 한 파일 설치본은 `Build/ArtValleyPhotoBooth-Setup.exe`에 생성됩니다. 과학관 PC에는 설치본 하나만 복사해 실행하면 `%LOCALAPPDATA%\Programs\Art Valley Photo Booth`에 풀고 앱을 시작하며 시작 메뉴와 Windows 시작프로그램 바로가기를 만듭니다. 자동 시작 해제는 관제 도구의 `[9]`에서 할 수 있습니다. ZIP의 `Operations/`에 관제 프로그램과 안내서가 들어갑니다. `Build/`, 엔진 다운로드 및 export template은 생성·로컬 도구이므로 Git에서 제외합니다.
 
-설치본은 쓰기 가능한 사용자 폴더에 설치됩니다. 설정은 `StreamingAssets/config.json`, 사진·CSV·터널 로그는 `MyPhotoBooth/`에 둡니다. Windows 시작 시 실행이 필요하면 `Operations/Operator-Control.cmd`에서 `[9]`를 선택해 등록하세요. 이 등록은 현재 Windows 계정 로그인 때 앱 EXE를 실행하는 바로가기를 만듭니다. 사진 정리는 1일 경과분이 대상이고 최소 보관 수는 0입니다.
+설치본은 쓰기 가능한 사용자 폴더에 설치됩니다. 설정은 `StreamingAssets/config.json`, 사진·CSV·터널 로그는 `MyPhotoBooth/`에 둡니다. 기본 설치는 현재 Windows 계정 로그인 때 자동 실행되도록 등록합니다. 이 설정은 `Operations/Operator-Control.cmd`의 `[9]` 또는 Windows의 `shell:startup`에서 바꿀 수 있습니다. 사진 정리는 1일 경과분이 대상이고 최소 보관 수는 0입니다.
 
 ## 구조
 
